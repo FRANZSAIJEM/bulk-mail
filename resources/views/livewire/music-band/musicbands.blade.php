@@ -1,6 +1,21 @@
 
 <div style="margin-top: 100px;">
  <div class="card-left card rounded-lg p-2 m-5">
+    @if (session()->has('message'))
+        <div class="alert alert-success">
+            {{ session('message') }}
+        </div>
+    @endif
+    @if (session()->has('delete-info'))
+    <div class="alert alert-danger">
+        {{ session('delete-info') }}
+    </div>
+@endif
+@if (session()->has('edit-info'))
+<div class="alert alert-warning">
+    {{ session('edit-info') }}
+</div>
+@endif
        <div class="card-body">
                     <input type="text" name="" id="" placeholder="Search Name" class="form-control m-2 mb-4" wire:model='bandSearch'>
 

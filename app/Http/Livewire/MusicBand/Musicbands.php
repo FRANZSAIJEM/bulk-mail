@@ -55,7 +55,7 @@ class Musicbands extends Component
         $musicbar->save();
         $this->dispatchBrowserEvent('barCreated');
 
-        session()->flash('message', 'New music bar has been added Successfully');
+
 
 
         $this->image = '';
@@ -64,7 +64,8 @@ class Musicbands extends Component
         $this->rate = '';
         $this->genre = '';
 
-        return redirect('/');
+
+        session()->flash('message', 'New music bar has been added Successfully');
 
 
         $this->musicbar = $musicbar;
@@ -133,7 +134,7 @@ class Musicbands extends Component
 
         $this->dispatchBrowserEvent('barSaved');
 
-        return redirect()->to('/')->with('message', 'New Music Bar has been updated Successfully');
+        session()->flash('edit-info', 'New Music Bar has been updated Successfully');
     }
 
     public function deleteConfirm($id)
@@ -149,7 +150,10 @@ class Musicbands extends Component
 
 
         // return redirect()->back()->with('success', 'Data deleted successfully!');
+        session()->flash('delete-info', 'music bar has been deleted Successfully');
+
         $this->dispatchBrowserEvent('barDelete');
+
 
     }
     public $bandLocation = 'all';
@@ -162,15 +166,14 @@ class Musicbands extends Component
     public function mount()
     {
         $this->locations = Musicband::pluck('location')->unique()->toArray();
-
     }
-
 
     public function index()
     {
 
         $query = Musicband::orderby('id')->search($this->bandSearch);
         return view('components.musicband');
+
     }
 
     public $bandSearch;
@@ -178,7 +181,6 @@ class Musicbands extends Component
 
     public $sortBy = 'sortby';
     public $sortRate = 0;
-
 
     public function render()
     {
