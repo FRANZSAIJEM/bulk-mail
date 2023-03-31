@@ -13,20 +13,17 @@ use Livewire\WithPagination;
 class Musicbands extends Component
 {
 
-
-
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
-
 
     use WithFileUploads;
 
     public $image, $selectedMusicBarId, $name, $location, $rate, $musicbar_edit_id, $musicbar_delete_id;
     public $genre = '';
 
-
     public function addBar()
     {
+
         $this->validate([
             'image' => 'required',
             'name' => 'required',
@@ -36,10 +33,7 @@ class Musicbands extends Component
 
         ]);
 
-
         $musicbar = new Musicband();
-
-
 
         $imageName = Carbon::now()->timestamp. '.' .$this->image->extension();
         $this->image->storeAs('image_uploads', $imageName);
@@ -70,15 +64,15 @@ class Musicbands extends Component
         $this->rate = '';
         $this->genre = '';
 
+        return redirect('/');
+
 
         $this->musicbar = $musicbar;
 
     }
     public function viewBar($id)
     {
-
         $this->selectedMusicBarId = $id;
-
 
         $musicbar = Musicband::find($id);
         $this->musicbar = $musicbar;
@@ -86,8 +80,6 @@ class Musicbands extends Component
         $image_url = asset('uploads/image_uploads/' . $musicbar->image);
         $script = "$('#modal-image').attr('src', '{$image_url}');";
         $this->dispatchBrowserEvent('update-image', ['script' => $script]);
-
-
     }
 
 
@@ -99,11 +91,8 @@ class Musicbands extends Component
         $musicbar = Musicband::where('id', $id)->first();
         $this->musicbar = $musicbar;
 
-        $image_url = asset('uploads/image_uploads/' . $musicbar->image);
-        $script = "$('#modal-image').attr('src', '{$image_url}');";
-
         $this->musicbar_edit_id = $musicbar->id;
-        $this->image = $musicbar->image;
+
         $this->name = $musicbar->name;
         $this->location = $musicbar->location;
         $this->rate = $musicbar->rate;
@@ -116,7 +105,7 @@ class Musicbands extends Component
     public function updateBarData()
     {
         $this->validate([
-            'image' => 'required',
+
             'name' => 'required',
             'location' => 'required',
             'rate' => 'required',
@@ -157,26 +146,32 @@ class Musicbands extends Component
         $musicbar = Musicband::where('id', $this->musicbar_delete_id)->first();
         $musicbar->delete();
 
+
+
+        // return redirect()->back()->with('success', 'Data deleted successfully!');
         $this->dispatchBrowserEvent('barDelete');
+
     }
     public $bandLocation = 'all';
+    public $locations;
+
+    // public $locations = [];
+
+    // public $selectedLocation = '';
+
+    public function mount()
+    {
+        $this->locations = Musicband::pluck('location')->unique()->toArray();
+
+    }
+
+
     public function index()
     {
 
         $query = Musicband::orderby('id')->search($this->bandSearch);
-
-
-
-
-        if($this->bandLocation != 'all'){
-            $query->where('location', $this->bandLocation);
-        }
-
-
         return view('components.musicband');
     }
-
-
 
     public $bandSearch;
     public $genRock, $genPop, $genReggae, $genAcoustic, $genClassical;
@@ -184,19 +179,82 @@ class Musicbands extends Component
     public $sortBy = 'sortby';
     public $sortRate = 0;
 
+
     public function render()
     {
-
-
         $query = Musicband::search($this->bandSearch);
 
         if ($this->sortRate <= 100) {
             $query = $query->where('rate', '>=', $this->sortRate);
         }
 
-        if($this->bandLocation != 'all'){
+        // $listings = Listing::when($this->selectedLocation, function ($query, $location) {
+        //     return $query->where('location', $location);
+        // })->get();
+
+        // return view('livewire.listings-index', [
+        //     'listings' => $listings,
+        // ]);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // $musicbands = MusicBand::all();
+        // $query = MusicBand::query();
+
+        if ($this->bandLocation != 'all') {
             $query->where('location', $this->bandLocation);
         }
+
+        // $musicbands = $query->get();
+
+        // return view('components.musicband', [
+        //     'musicbands' => $musicbands
+        // ]);
+
+
+        // if($this->bandLocation != 'all'){
+        //     $query->where('location', $this->bandLocation);
+        // }
+
+
+        // if ($this->bandLocation != 'all') {
+        //     $selectedLocations[] = $this->bandLocation;
+        // }
+
+        // if (!empty($this->selectedLocations)) {
+        //     $query->whereIn('location', $this->selectedLocations);
+        // }
+
+        // if (!empty($selectedLocations)) {
+        //     $query->whereIn('location', $selectedLocations);
+        // }
+
+
+        // $this->locations = Musicband::pluck('location')->unique()->toArray();
+
+
+        // $musicbands = Musicband::query()
+        //     ->when(!empty($this->selectedLocations), function ($query) {
+        //         $query->whereIn('location', $this->selectedLocations);
+        //     })
+        //     ->paginate(4);
+
+        // return view('livewire.music-band.musicbands', [
+        //     'musicbands' => $musicbands,
+        //     'locations' => $this->locations,
+        // ]);
 
 
 
@@ -209,33 +267,106 @@ class Musicbands extends Component
         }
 
 
+        // if($this->genRock == 'Rock' || $this->genPop == 'Pop' || $this->genReggae == 'Reggae' || $this->genAcoustic == 'Acoustic' || $this->genClassical == 'Classical'){
+        //     $query->where('genre', $this->genRock)
+        //     // $query->where('genre', $this->genPop);
+        //     // $query->where('genre', $this->genReggae);
+        //     // $query->where('genre', $this->genAcoustic);
+        //     // $query->where('genre', $this->genClassical);
+        //             ->orWhere('genre', $this->genPop)
+        //             ->orWhere('genre', $this->genReggae)
+        //             ->orWhere('genre', $this->genAcoustic)
+        //             ->orWhere('genre', $this->genClassical);
+        // }
+
+        // if ($this->genRock == 'Rock' || $this->genPop == 'Pop' || $this->genReggae == 'Reggae' || $this->genAcoustic == 'Acoustic' || $this->genClassical == 'Classical') {
+
+        //         $query->where('genre', $this->genRock)
+        //             ->orWhere('genre', $this->genPop)
+        //             ->orWhere('genre', $this->genReggae)
+        //             ->orWhere('genre', $this->genAcoustic)
+        //             ->orWhere('genre', $this->genClassical);
+
+        // }
 
 
+        $selectedGenres = [];
 
+        // if ($this->genRock == 'Rock' || $this->genPop == 'Pop' || $this->genReggae == 'Reggae' || $this->genAcoustic == 'Acoustic' || $this->genClassical == 'Classical') {
+        //     if($this->genRock == 'Rock'){
+        //         $selectedGenres = 'Rock';
+        //         $query->where('genre','Rock');
+        //     }
+        //     if($this->genPop == 'Pop'){
+        //         $selectedGenres = 'Pop';
+        //         $query->where('genre','Pop');
+        //     }
+        //     if($this->genReggae == 'Reggae'){
+        //         $selectedGenres = 'Reggae';
+        //         $query->where('genre','Reggae');
+        //     }
+        //     if($this->genAcoustic == 'Acoustic'){
+        //         $selectedGenres = 'Acoustic';
+        //         $query->where('genre','Acoustic');
+        //     }
+        //     if($this->genClassical == 'Classical'){
+        //         $selectedGenres = 'Classical';
+        //         $query->where('genre','Classical');
+        //     }
+        // }
 
-
-        if($this->genRock != null){
-            $query->where('genre', $this->genRock);
+        if ($this->genRock == 'Rock' || $this->genPop == 'Pop' || $this->genReggae == 'Reggae' || $this->genAcoustic == 'Acoustic' || $this->genClassical == 'Classical') {
+            $query->where(function ($q) use ($selectedGenres) {
+                if ($this->genRock == 'Rock') {
+                    $selectedGenres[] = 'Rock';
+                    $q->orWhere('genre', 'Rock');
+                }
+                if ($this->genPop == 'Pop') {
+                    $selectedGenres[] = 'Pop';
+                    $q->orWhere('genre', 'Pop');
+                }
+                if ($this->genReggae == 'Reggae') {
+                    $selectedGenres[] = 'Reggae';
+                    $q->orWhere('genre', 'Reggae');
+                }
+                if ($this->genAcoustic == 'Acoustic') {
+                    $selectedGenres[] = 'Acoustic';
+                    $q->orWhere('genre', 'Acoustic');
+                }
+                if ($this->genClassical == 'Classical') {
+                    $selectedGenres[] = 'Classical';
+                    $q->orWhere('genre', 'Classical');
+                }
+            });
         }
 
-        if($this->genPop != null){
-            $query->where('genre', $this->genPop);
-        }
-        if($this->genReggae != null){
-            $query->where('genre', $this->genReggae);
-        }
-        if($this->genAcoustic != null){
-            $query->where('genre', $this->genAcoustic);
-        }
-        if($this->genClassical != null){
-            $query->where('genre', $this->genClassical);
-        }
+        // if($this->genRock == 'Rock'){
+        //     $query->where('genre', $this->genRock);
+        // }
+
+        // elseif($this->genPop == 'Pop'){
+        //     $query->where('genre', $this->genPop);
+        // }
+
+        // elseif($this->genReggae == 'Reggae'){
+        //     $query->where('genre', $this->genReggae);
+        // }
+
+        // elseif($this->genAcoustic == 'Acoustic'){
+        //     $query->where('genre', $this->genAcoustic);
+        // }
+
+        // elseif($this->genClassical == 'Classical'){
+        //     $query->where('genre', $this->genClassical);
+        // }
 
 
         $musicbar = $query->paginate(4);
 
         return view('livewire.music-band.musicbands', ['musicbands'=>$musicbar]);
     }
+
+
 
 
     public function resetFilter(){

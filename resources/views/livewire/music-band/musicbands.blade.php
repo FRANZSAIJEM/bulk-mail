@@ -14,12 +14,33 @@
                         <input type="checkbox" name="" id="" wire:model='genClassical' value="Classical" class="mb-4"> &nbsp; Classical <br>
                     </div>
 
-                   <select name="" id="" class="form-select mb-4" style="transform: translateX(7px);" wire:model='bandLocation'>
+
+                    <div>
+                        <select wire:model="bandLocation" class="form-select">
+                            <option value="all">All Locations</option>
+                            @foreach($locations as $location)
+                                <option value="{{ $location }}">{{ $location }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    {{-- <select name="" id="" class="form-select mb-4" style="transform: translateX(7px);" wire:model='bandLocation'>
                         <option value="all">Select Location</option>
                         @foreach ($musicbands as $musicbar)
                             <option value="{{ $musicbar->location }}">{{ $musicbar->location }}</option>
                         @endforeach
-                   </select>
+                   </select> --}}
+
+
+                   {{-- <select name="" id="" class="form-select mb-4" style="transform: translateX(7px);" wire:model='bandLocation'>
+                    <option value="all">Select Location</option>
+                    @foreach ($locations as $location)
+                        <option value="{{ $location }}">{{ $location }}</option>
+                    @endforeach
+                </select> --}}
+
+
+
                    <div class="rate d-inline-block mt-2" style="transform: translateX(6px);">
                         <label for="">Rate:</label><br>
                         <input style="width: 350px;" type="range" id="sortRangeInput" name="sortRangeInput" min="0" max="100"
@@ -41,14 +62,14 @@
                         </select>
 
 
-                        <button class="btn btn-primary float-end mt-5" wire:click='resetFilter'>Reset Filter</button>
+                        <button class="btn btn-primary float-end mt-5" wire:click='resetFilter'><i class="fa-solid fa-rotate-right"></i> Reset Filter</button>
 
                 </div>
-</div>
+            </div>
 
             <div style="margin-top: -670px;">
                 <button class="btn btn-primary mt-5 float-end" style="margin-right: 75px; margin-bottom: -100px;"
-                data-bs-toggle="modal" data-bs-target="#addNew">Create New</button>
+                data-bs-toggle="modal" data-bs-target="#addNew"> <i class="fa fa-plus"></i> Create New</button>
 
 
                 <div class="right" style="margin-left: 600px; margin-top: -725px;">
@@ -70,9 +91,9 @@
                                 Genre: {{$musicbar->genre}}<br> <br>
                             </div>
                         </div>
-                        <div class="action d-flex mb-3" style="margin-left: 425px; margin-top: -75px;">
-                            <button class="btn btn-success m-2" data-bs-toggle="modal" data-bs-target="#edit" wire:click='editBar({{$musicbar->id}})'>Edit</button>
-                            <button class="btn btn-danger m-2" data-bs-toggle="modal" data-bs-target="#delete" wire:click='deleteConfirm({{$musicbar->id}})'>Delete</button>
+                        <div class="action d-flex mb-3" style="margin-left: 475px; margin-top: -75px;">
+                            <button class="btn btn-success m-2" data-bs-toggle="modal" data-bs-target="#edit" wire:click='editBar({{$musicbar->id}})'> <i class="fa fa-edit"></i></button>
+                            <button class="btn btn-danger m-2" data-bs-toggle="modal" data-bs-target="#delete" wire:click='deleteConfirm({{$musicbar->id}})'> <i class="fa fa-trash"></i></button>
 
                         </div>
                     </div>
@@ -170,8 +191,8 @@
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary" >Create</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"> <i class="fa fa-close"></i> Close</button>
+                    <button type="submit" class="btn btn-primary"> <i class="fa fa-add"></i> Create</button>
                   </div>
             </form>
         </div>
@@ -191,7 +212,7 @@
             <form wire:submit.prevent='updateBarData'>
                 <div class="elements mb-3">
 
-                    <input type="file" name="" id="" class="form-control" wire:model='image'>
+
                     @foreach ($musicbands as $musicbar)
                         @if ($musicbar->id === $selectedMusicBarId)
                             <img src="{{ asset('uploads/image_uploads/' . $musicbar->image) }}" width="250" class="rounded" alt="">
@@ -256,8 +277,8 @@
                     @enderror
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Update</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"> <i class="fa fa-close"></i> Close</button>
+                    <button type="submit" class="btn btn-primary"> <i class="fa fa-floppy-disk"></i> Update</button>
                   </div>
             </form>
         </div>
@@ -266,7 +287,7 @@
     </div>
   </div>
 
-  <div wire:ignore.self class="modal fade text-black" id="delete" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div wire:ignore.self class="modal fade text-black mt-lg-5" id="delete" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -274,11 +295,11 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-            <h1 class="text-black">Delete</h1>
+            <h1 class="text-black">Are you sure you want to delete this Band?</h1>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-danger" wire:click='deleteBardata' data-bs-dismiss="modal">Delete</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"> <i class="fa fa-close"></i> Close</button>
+          <button type="button" class="btn btn-danger" wire:click='deleteBardata' data-bs-dismiss="modal"> <i class="fa fa-trash"></i> Delete</button>
         </div>
       </div>
     </div>
